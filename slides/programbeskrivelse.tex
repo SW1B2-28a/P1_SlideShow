@@ -1,4 +1,4 @@
-\section{Programbeskrivelse}
+\subsection{Programbeskrivelse}
 \usetikzlibrary{arrows,calc,positioning}
 
 % Define block styles
@@ -19,11 +19,12 @@
   label/.style = {font=\footnotesize, midway, fill=white, anchor=center}
 }
 
-\begin{frame}{Programbeskrivelse}
+\begin{frame}{Problemløsning}{Programbeskrivelse}
+Flowchart for automatisering: \newline\newline
     \begin{tikzpicture}[node distance = 1cm, auto, thick, scale=0.6, every node/.style={scale=0.6}]
         \node [block] (init) {Initialisering};
         \node [block, below of=init]    (loop)      {Loop};
-        \node [cloud, below of=loop, xshift=2em, yshift=-1.5em]    (vent)      {Vent til lige tid};
+        \node [cloud, below of=loop, xshift=2em, yshift=-1.5em]    (vent)      {Vent på sim.c};
         \node [block, below of=vent]    (state)     {Indlæs data};
         \node [block, below of=state]   (regler)    {Check regler};
         \node [block, below of=regler, yshift=-2.5em]  (aktiver)   {Aktiver regler};
@@ -61,7 +62,7 @@
     \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{demo}
+\begin{frame}{Demo}
 \begin{itemize}
 \item git clone https://github.com/SW1B2-28a/AalborgProject.git
 \item cd AalborgProject/
