@@ -1,4 +1,40 @@
 \section{Programbeskrivelse}
+\usetikzlibrary{arrows,calc,positioning}
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=7em, text height = 0.75 em, text centered, rounded corners, minimum height=1em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=1cm,
+    minimum height=2em]
+
 \begin{frame}{Programbeskrivelse}
-Troels' del er her.
+    \begin{tikzpicture}[node distance = 1cm, auto, thick, scale=0.6, every node/.style={scale=0.6}]
+        \node [block] (init) {Init};
+        \node [block, below of=init]    (loop)      {Loop};
+        \node [cloud, below of=loop]    (vent)      {Vent til lige tid};
+        \node [block, below of=vent]    (state)     {Indlæs data};
+        \node [block, below of=state]   (regler)    {Check regler};
+        \node [block, below of=regler]  (aktiver)   {Aktiver regler};
+        \node [block, below of=aktiver] (skriv)     {Skriv data};
+        \node [block, below of=skriv]   (gentag)    {Gentag};
+
+        \node [decision] at (8,-4) (loop_con) {Dag færdig?};
+        \node [block] at (10,-5) (end) {Afslut};
+
+        \path [line] (loop_con) -| node [near start] {Ja}(end);
+        \path [line] (gentag)       -| (loop_con);
+        \path [line] (loop_con)     |- node [near end] {Nej}(loop);
+        \path [line] (init)         -- (loop);
+        \path [line] (loop)         -- (vent);
+        \path [line] (vent)         -- (state);
+        \path [line] (state)        -- (regler);
+        \path [line] (regler)       -- (aktiver);
+        \path [line] (aktiver)      -- (skriv);
+        \path [line] (skriv)        -- (gentag);
+
+
+    \end{tikzpicture}
 \end{frame}
