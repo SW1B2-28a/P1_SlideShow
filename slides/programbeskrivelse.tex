@@ -6,25 +6,47 @@
     text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
 \tikzstyle{block} = [rectangle, draw, fill=blue!20, 
     text width=7em, text height = 0.75 em, text centered, rounded corners, minimum height=1em]
+
+\tikzstyle{block_c} = [rectangle, draw, fill=red!50, text height = 0.75 em, text centered, rounded corners, minimum height=1em]
+
+
 \tikzstyle{line} = [draw, -latex']
 \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=1cm,
     minimum height=2em]
 
+
+\tikzset{
+  label/.style = {font=\footnotesize, midway, fill=white, anchor=center}
+}
+
 \begin{frame}{Programbeskrivelse}
     \begin{tikzpicture}[node distance = 1cm, auto, thick, scale=0.6, every node/.style={scale=0.6}]
-        \node [block] (init) {Init};
+        \node [block] (init) {Initialisering};
         \node [block, below of=init]    (loop)      {Loop};
-        \node [cloud, below of=loop]    (vent)      {Vent til lige tid};
+        \node [cloud, below of=loop, xshift=2em, yshift=-1.5em]    (vent)      {Vent til lige tid};
         \node [block, below of=vent]    (state)     {Indlæs data};
         \node [block, below of=state]   (regler)    {Check regler};
-        \node [block, below of=regler]  (aktiver)   {Aktiver regler};
+        \node [block, below of=regler, yshift=-2.5em]  (aktiver)   {Aktiver regler};
         \node [block, below of=aktiver] (skriv)     {Skriv data};
-        \node [block, below of=skriv]   (gentag)    {Gentag};
+        \node [block, below of=skriv, xshift=-2em, yshift=-1.5em]   (gentag)    {Gentag};
 
-        \node [decision] at (8,-4) (loop_con) {Dag færdig?};
-        \node [block] at (10,-5) (end) {Afslut};
+        %% Funktioner
+        \node [block_c, right of=state, xshift=18em]    (state_f)     {\textit{load\_current\_state();}};
+        \node [block_c, below of=state_f]    (check_s_f)     {\textit{check\_rule\_by\_state();}};
+        \node [block_c, below of=check_s_f]    (check_t_f)     {\textit{check\_rule\_by\_time();}};
+        \node [block_c, right of=aktiver, xshift=18em]    (actv_f)     {\textit{trigger\_rule();}};
+        \node [block_c, below of=actv_f]    (write_f)     {\textit{write\_current\_state();}};
+        
+        \draw [<->] (state) -- (state_f);
+        \draw [<->] (regler) -- (check_s_f);
+        \draw [->] (4,-4.5) |- (check_t_f);
+        \draw [<->] (aktiver) -- (actv_f);
+        \draw [<->] (skriv) -- (write_f);
 
-        \path [line] (loop_con) -| node [near start] {Ja}(end);
+        \node [decision] at (12,-4) (loop_con) {Dag færdig?};
+        \node [block] at (14,-5) (end) {Afslut};
+
+        \path [line] (loop_con)     -| node [near start] {Ja}(end);
         \path [line] (gentag)       -| (loop_con);
         \path [line] (loop_con)     |- node [near end] {Nej}(loop);
         \path [line] (init)         -- (loop);
@@ -37,4 +59,19 @@
 
 
     \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{demo}
+\begin{itemize}
+\item git clone https://github.com/SW1B2-28a/AalborgProject.git
+\item cd AalborgProject/
+\item gcc main.c -o main.out
+\item gcc sim.c -o sim.out
+\end{itemize}
+\begin{itemize}
+
+\item ./main.out –d
+\item ./sim
+\end{itemize}
+
 \end{frame}
