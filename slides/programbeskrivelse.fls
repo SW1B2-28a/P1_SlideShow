@@ -4,3 +4,5 @@ INPUT c:/texlive/2013/texmf-dist/web2c/texmf.cnf
 INPUT c:/texlive/2013/texmf-var/web2c/pdftex/pdflatex.fmt
 INPUT programbeskrivelse.tex
 OUTPUT programbeskrivelse.log
+INPUT c:/texlive/2013/texmf-dist/fonts/map/fontname/texfonts.map
+INPUT c:/texlive/2013/texmf-dist/fonts/tfm/public/cm/cmti10.tfm

@@ -1,25 +1,82 @@
 \subsection{Programbeskrivelse}
 \usetikzlibrary{arrows,calc,positioning}
 
-% Define block styles
-\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
-    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
-\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
-    text width=7em, text height = 0.75 em, text centered, rounded corners, minimum height=1em]
-
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=1cm, minimum height=2em]
+\tikzstyle{cloud_c} = [draw, ellipse,fill=yellow!20, node distance=0.7cm, minimum height=2em]
+\tikzstyle{lille} = [rectangle, minimum width=2cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+\tikzstyle{main} = [rectangle, minimum width=2cm, minimum height=2cm,text centered, draw=black, fill=red!30]
+\tikzstyle{hoj} = [rectangle, minimum width=1cm, minimum height=2cm,text centered, draw=black, fill=red!30]
+\tikzstyle{invi} = [draw, ellipse, node distance=3cm, minimum height=2em]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=7em, text height = 0.75 em, text centered, rounded corners, minimum height=1em]
 \tikzstyle{block_c} = [rectangle, draw, fill=red!50, text height = 0.75 em, text centered, rounded corners, minimum height=1em]
-
-
 \tikzstyle{line} = [draw, -latex']
-\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=1cm,
-    minimum height=2em]
 
 
 \tikzset{
   label/.style = {font=\footnotesize, midway, fill=white, anchor=center}
 }
+\begin{frame}{Problemløsning}
+    Programmet overordnede idé: \newline
 
-\begin{frame}{Problemløsning}{Programbeskrivelse}
+    \begin{tikzpicture}[node distance = 3cm, auto, thick, scale=0.6, every node/.style={scale=0.6}]
+        %noderne (objekterne) laves
+        \node (invi1) [invi,draw=none] {};
+        \node (tid) [cloud_c, above of=invi1] {Tid};
+        \node (dev) [cloud_c, below of=invi1] {Enhedsstadie};
+        \node (in) [hoj, right of=invi1] {Inddata (sim.c)};
+        \node (main) [main, right of=in] {main.c};
+        \node (rules) [lille, above of=main] {Regler};
+        \node (action) [hoj, right of=main] {Reaktion};
+        \node (invi2) [invi, draw=none, right of=action] {};
+        \node (enables) [cloud_c, above of=invi2] {Aktiver};
+        \node (disables) [cloud_c, below of=invi2] {Deaktiver};
+        %pointers laves
+        \draw [arrow] (tid) -- (in);
+        \draw [arrow] (dev) -- (in);
+        \draw [arrow] (in) -- (main);
+        \draw [arrow] (rules) -- (main);
+        \draw [arrow] (main) -- (action);
+        \draw [arrow] (action) --(enables);
+        \draw [arrow] (action) --(disables);
+    \end{tikzpicture}
+\end{frame}
+\subsubsection{Interface}
+\begin{frame}{Problemløsning}{Programbeskrivelse af interface}
+test@test:~/AalborgProject\# ./main.out \newline
+Loaded 5 rules, and 9 devices.\newline
+---------------------\newline
+Please choose an option.\newline
+  '-1' Quit\newline
+  '1' Print list of rules [5]\newline
+  '2' Print list of devices [9]\newline
+  '3' Add rule\newline
+  '4' Add device\newline
+  '5' Edit rule\newline
+  '6' Delete rule\newline
+  '7' Delete device\newline
+  '8' Start home automation\newline
+>\newline
+\end{frame}
+\subsubsection{Regler}
+\begin{frame}{Problemløsning}{Eksempel på regel}
+Rule number 0 \newline
+Name: Morgen\_auto\\
+Active: Yes\\
+Timer based: Yes\\
+Active at time: 07:10\\
+Depends on devices:\newline
+    None\newline
+Affects devices (Enables):\newline
+    0: Vaekkeur\newline
+    1: Kaffemaskine\newline
+    2: Lys\newline
+Affects devices (Disables):\newline
+    None
+\end{frame}
+\subsubsection{Automatisering}
+\begin{frame}{Problemløsning}{Programbeskrivelse af automatisering}
 Flowchart for automatisering: \newline\newline
     \begin{tikzpicture}[node distance = 1cm, auto, thick, scale=0.6, every node/.style={scale=0.6}]
         \node [block] (init) {Initialisering};
@@ -37,16 +94,13 @@ Flowchart for automatisering: \newline\newline
         \node [block_c, below of=check_s_f]    (check_t_f)     {\textit{check\_rule\_by\_time();}};
         \node [block_c, right of=aktiver, xshift=18em]    (actv_f)     {\textit{trigger\_rule();}};
         \node [block_c, below of=actv_f]    (write_f)     {\textit{write\_current\_state();}};
-        
         \draw [<->] (state) -- (state_f);
         \draw [<->] (regler) -- (check_s_f);
         \draw [->] (4,-4.5) |- (check_t_f);
         \draw [<->] (aktiver) -- (actv_f);
         \draw [<->] (skriv) -- (write_f);
-
         \node [decision] at (12,-4) (loop_con) {Dag færdig?};
         \node [block] at (14,-5) (end) {Afslut};
-
         \path [line] (loop_con)     -| node [near start] {Ja}(end);
         \path [line] (gentag)       -| (loop_con);
         \path [line] (loop_con)     |- node [near end] {Nej}(loop);
@@ -57,11 +111,8 @@ Flowchart for automatisering: \newline\newline
         \path [line] (regler)       -- (aktiver);
         \path [line] (aktiver)      -- (skriv);
         \path [line] (skriv)        -- (gentag);
-
-
     \end{tikzpicture}
 \end{frame}
-
 \begin{frame}{Demo}
 \begin{itemize}
 \item git clone https://github.com/SW1B2-28a/AalborgProject.git
